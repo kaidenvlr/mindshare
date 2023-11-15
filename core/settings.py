@@ -133,3 +133,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+
+# Superuser credentials for creating it.
+
+SUPERUSER_USERNAME = os.getenv("SUPERUSER_USERNAME")
+SUPERUSER_PASSWORD = os.getenv("SUPERUSER_PASSWORD")
+SUPERUSER_MAIL = os.getenv("SUPERUSER_MAIL")

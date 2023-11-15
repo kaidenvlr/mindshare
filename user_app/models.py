@@ -14,7 +14,7 @@ class Customer(models.Model):
     avatar = models.ImageField(upload_to='avatars/', default='avatars/default.jpeg')
     is_verified = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
-    followers = models.ManyToManyField('self')
+    followers = models.ManyToManyField('self', related_name='following')
 
     def __str__(self):
         return f"{self.user.username}"

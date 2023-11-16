@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.urls import path
-from rest_framework.authtoken import views
+from django.urls import include
 
 urlpatterns = [
-    # DRF Token
-    path('api-token-auth/', views.obtain_auth_token),
-
     # Admin Panel
     path('admin/', admin.site.urls),
+
+    # User Application
+    path('api/v1/', include('user_app.urls'), name='user-app'),
 ]

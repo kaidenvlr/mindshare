@@ -4,6 +4,10 @@ from rest_framework import permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
+from rest_framework import viewsets
+
+from django.shortcuts import get_object_or_404
+
 from user_app.models import Customer
 from user_app.serializers import RegisterSerializer, CustomerSerializer, LoginSerializer
 
@@ -38,12 +42,33 @@ class LoginAPIView(generics.CreateAPIView):
         return Response({'token': token.key})
 
 
-class CustomerAPIView(generics.ListCreateAPIView):
+class CustomerViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().filter(is_verified=True)
+        queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
-        return serializer.data
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk, *args, **kwargs):
+        queryset = self.get_queryset()
+        instance = get_object_or_404(queryset, pk=pk)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        pass
+
+    def update(self, request, *args, **kwargs):
+        pass
+
+    def destroy(self, request, *args, **kwargs):
+        pass
+
+    def options(self, request, *args, **kwargs):
+        pass
+
+    def partial_update(self, request, *args, **kwargs):
+        pass

@@ -52,9 +52,9 @@ class CustomerViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        instance = get_object_or_404(queryset, pk=pk)
+        instance = get_object_or_404(queryset, pk=kwargs.get('pk'))
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 

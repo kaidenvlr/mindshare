@@ -1,9 +1,36 @@
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework import validators
 
 from user_app.models import Customer
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    token = serializers.CharField(read_only=True)
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if username and password:
+            user = authenticate(
+                request=self.context.get('request'),
+                username=username,
+                password=password
+            )
+            if not user:
+                msg = _("Unable to log in with provided credentials.")
+                raise serializers.ValidationError(msg, code='authorization')
+        else:
+            msg = _('Must include "username" and "password".')
+            raise serializers.ValidationError(msg, code='authorization')
+        attrs['user'] = user
+        return attrs
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -11,7 +38,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         required=True,
         validators=(validators.UniqueValidator(queryset=User.objects.all()),)
     )
-    email = serializers.CharField(
+    email = serializers.EmailField(
         required=True,
         validators=(validators.UniqueValidator(queryset=User.objects.all()),)
     )
